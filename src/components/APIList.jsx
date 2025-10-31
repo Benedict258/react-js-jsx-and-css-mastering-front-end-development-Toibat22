@@ -30,40 +30,44 @@ const APIList = () => {
             } finally {
                 setLoading(false);
             }
-    };
-    fetchData();
-}, []);
+        };
+        fetchData();
+    }, []);
 
-useEffect(() => {
-    const filtered = item.filter((it) =>
-        it.title.toLowerCase().includes(query.toLowerCase())
+    useEffect(() => {
+        const filtered = item.filter((it) =>
+            it.API?.toLowerCase().includes(query.toLowerCase()) ||
+            it.Description?.toLowerCase().includes(query.toLowerCase())
+        );
+        const start = (page - 1) * PAGE_SIZE;
+        const next = filtered.slice(start, start + PAGE_SIZE);
+        setDisplayed(next);
+    }, [item, page, query]);
+
+    const totalPages = Math.ceil(
+        item.filter((it) =>
+            it.API?.toLowerCase().includes(query.toLowerCase()) ||
+            it.Description?.toLowerCase().includes(query.toLowerCase())
+        ).length / PAGE_SIZE
     );
-    const start = (page - 1) * PAGE_SIZE;
-    const next = filtered.slice(start, start + PAGE_SIZE);
-    setDisplayed(next);
-  }, [items, page, query]);
 
-  const totalPages = Math.ceil(
-    items.filter((it) => it.title.toLowerCase().includes(query.toLowerCase())).length / PAGE_SIZE
-  );
+    if (loading) {
+        return <div className="p-6 bg-white dark:bg-gray-800 rounded shadow">Loading...</div>;
+    }
 
-  if (loading) {
-    return <div className="p-6 bg-white dark:bg-gray-800 rounded shadow">Loading...</div>;
-  }
+    if (error) {
+        return <div className="p-6 bg-red-100 text-red-700 rounded">{error}</div>;
+    }
 
-  if (error) {
-    return <div className="p-6 bg-red-100 text-red-700 rounded">{error}</div>;
-  }
-
-  return (
+    return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-      <h2 className="text-2xl font-bold mb-4">API Data (JSONPlaceholder Posts)</h2>
+      <h2 className="text-2xl font-bold mb-4">Public APIs Explorer</h2>
 
       <div className="mb-4 flex gap-2">
         <input
           value={query}
           onChange={(e) => { setQuery(e.target.value); setPage(1); }}
-          placeholder="Search by title..."
+          placeholder="Search APIs..."
           className="flex-grow px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
         />
         <Button variant="secondary" onClick={() => { setQuery(''); setPage(1); }}>
@@ -72,10 +76,15 @@ useEffect(() => {
       </div>
 
       <ul className="space-y-3">
-        {displayed.map((post) => (
-          <li key={post.id} className="p-3 border rounded hover:bg-gray-50 dark:hover:bg-gray-700">
-            <h3 className="font-semibold">{post.title}</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{post.body}</p>
+        {displayed.map((api, index) => (
+          <li key={index} className="p-3 border rounded hover:bg-gray-50 dark:hover:bg-gray-700">
+            <h3 className="font-semibold">{api.API}</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{api.Description}</p>
+            <div className="flex gap-2 mt-2 text-xs">
+              <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 rounded">{api.Category}</span>
+              {api.Auth && <span className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 rounded">Auth: {api.Auth}</span>}
+              {api.HTTPS && <span className="px-2 py-1 bg-green-100 dark:bg-green-900 rounded">HTTPS</span>}
+            </div>
           </li>
         ))}
       </ul>
@@ -94,7 +103,7 @@ useEffect(() => {
         </div>
       </div>
     </div>
-  );
+    );
 };
 
 export default APIList;
