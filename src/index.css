@@ -36,7 +36,7 @@
   --spacing-2xl: 3rem;
 
   /* Typography */
-  --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   --font-mono: 'Courier New', Courier, monospace;
 
   /* Transitions */
@@ -63,6 +63,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
   transition: background var(--transition-normal), color var(--transition-normal);
 }
+
+h1, h2, h3 {
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+h1 { font-size: clamp(2rem, 1rem + 3vw, 3rem); }
+h2 { font-size: clamp(1.5rem, 0.9rem + 2vw, 2rem); }
+h3 { font-size: clamp(1.25rem, 0.85rem + 1vw, 1.5rem); }
 
 /* Dark Mode */
 .dark body {
@@ -105,6 +114,32 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+/* Centered page layout helper */
+.page-center {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--spacing-2xl) var(--spacing-xl);
+}
+
+/* Panel/Card base styling */
+.panel {
+  background: var(--color-bg-light);
+  color: var(--color-text-light);
+  border: 1px solid var(--color-border-light);
+  border-radius: 16px;
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-lg);
+}
+.dark .panel {
+  background: var(--color-surface-dark);
+  color: var(--color-text-dark);
+  border-color: var(--color-border-dark);
+  box-shadow: var(--shadow-glow);
 }
 
 /* Navbar Styling */
@@ -276,6 +311,27 @@ body {
   overflow: hidden;
 }
 
+/* Provide actual backgrounds for Tailwind-like tokens used in JSX */
+.bg-white { background: #ffffff; }
+.dark .dark\:bg-gray-800 { background: #1f2937; }
+
+.rounded-lg { border-radius: 16px; }
+.shadow { box-shadow: var(--shadow-lg); }
+.p-6 { padding: var(--spacing-2xl); }
+.p-3 { padding: var(--spacing-md); }
+.mb-4 { margin-bottom: var(--spacing-lg); }
+.mb-6 { margin-bottom: var(--spacing-xl); }
+.mt-4 { margin-top: var(--spacing-lg); }
+.mt-6 { margin-top: var(--spacing-xl); }
+.space-y-2 > * + * { margin-top: var(--spacing-sm); }
+.space-y-3 > * + * { margin-top: var(--spacing-md); }
+
+.border { border: 1px solid var(--color-border-light); }
+.dark .dark\:border-gray-700 { border-color: var(--color-border-dark); }
+
+.hover\:bg-gray-50:hover { background: #f9fafb; }
+.dark .dark\:hover\:bg-gray-700:hover { background: #374151; }
+
 .bg-white::before,
 .dark .dark\:bg-gray-800::before {
   content: '';
@@ -301,6 +357,10 @@ input[type="password"],
 textarea {
   border: 2px solid var(--color-border-light);
   transition: all var(--transition-fast);
+  background: var(--color-surface-light);
+  color: inherit;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 10px;
 }
 
 .dark input[type="text"],

@@ -1,61 +1,74 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled, { css } from 'styled-components';
 
-/**
- * Button component with different variants
- * @param {Object} props - Component props
- * @param {string} props.variant - Button variant (primary, secondary, danger)
- * @param {string} props.size - Button size (sm, md, lg)
- * @param {boolean} props.disabled - Whether the button is disabled
- * @param {function} props.onClick - Click handler function
- * @param {React.ReactNode} props.children - Button content
- * @returns {JSX.Element} - Button component
- */
-const Button = ({ 
-  variant = 'primary', 
-  size = 'md', 
-  disabled = false, 
-  onClick, 
-  children,
-  className = '',
-  ...rest 
-}) => {
-  // Base classes
-  const baseClasses = 'inline-flex items-center justify-center font-medium rounded focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors';
-  
-  // Variant classes
-  const variantClasses = {
-    primary: 'bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500',
-    secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-800 focus:ring-gray-500',
-    danger: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500',
-    success: 'bg-green-600 hover:bg-green-700 text-white focus:ring-green-500',
-    warning: 'bg-yellow-500 hover:bg-yellow-600 text-white focus:ring-yellow-500',
-  };
-  
-  // Size classes
-  const sizeClasses = {
-    sm: 'px-2 py-1 text-sm',
-    md: 'px-4 py-2',
-    lg: 'px-6 py-3 text-lg',
-  };
-  
-  // Disabled classes
-  const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer';
-  
-  // Combine all classes
-  const buttonClasses = `${baseClasses} ${variantClasses[variant] || variantClasses.primary} ${sizeClasses[size] || sizeClasses.md} ${disabledClasses} ${className}`;
-  
-  return (
-    <button
-      className={buttonClasses}
-      disabled={disabled}
-      onClick={onClick}
-      {...rest}
-    >
-      {children}
-    </button>
-  );
+// Styles driven by CSS variables defined in index.css
+const variantStyles = {
+  primary: css`
+    color: #fff;
+    background: var(--color-primary);
+    box-shadow: 0 8px 20px -8px var(--color-shadow);
+    &:hover { background: var(--color-primary-dark); transform: translateY(-1px); }
+    &:active { transform: translateY(0); }
+    &:focus-visible { box-shadow: 0 0 0 3px var(--color-shadow); }
+  `,
+  secondary: css`
+    color: var(--color-text-light);
+    background: var(--color-surface-light);
+    border: 1px solid var(--color-border-light);
+    &:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .dark & { color: var(--color-text-dark); background: var(--color-surface-dark); border-color: var(--color-border-dark); }
+  `,
+  danger: css`
+    color: #fff;
+    background: #ef4444; /* red-500 */
+    &:hover { background: #dc2626; }
+  `,
+  success: css`
+    color: #fff;
+    background: #10b981; /* emerald-500 */
+    &:hover { background: #059669; }
+  `,
+  warning: css`
+    color: #111827;
+    background: #f59e0b; /* amber-500 */
+    &:hover { background: #d97706; color: #111827; }
+  `,
 };
+
+const sizeStyles = {
+  sm: css` font-size: 0.875rem; padding: 0.5rem 0.75rem; `,
+  md: css` font-size: 1rem; padding: 0.65rem 1rem; `,
+  lg: css` font-size: 1.125rem; padding: 0.85rem 1.25rem; `,
+};
+
+const StyledButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  text-decoration: none;
+
+  ${(p) => sizeStyles[p.size || 'md']}
+  ${(p) => variantStyles[p.variant || 'primary']}
+
+  ${(p) => p.disabled && css`
+    opacity: 0.6;
+    cursor: not-allowed;
+    filter: grayscale(10%);
+  `}
+`;
+
+const Button = ({ variant = 'primary', size = 'md', disabled = false, onClick, children, className = '', ...rest }) => (
+  <StyledButton variant={variant} size={size} disabled={disabled} onClick={onClick} className={className} {...rest}>
+    {children}
+  </StyledButton>
+);
 
 Button.propTypes = {
   variant: PropTypes.oneOf(['primary', 'secondary', 'danger', 'success', 'warning']),
@@ -66,4 +79,4 @@ Button.propTypes = {
   className: PropTypes.string,
 };
 
-export default Button; 
+export default Button;
